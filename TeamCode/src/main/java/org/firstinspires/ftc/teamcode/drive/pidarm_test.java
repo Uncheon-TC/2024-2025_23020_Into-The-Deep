@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.drive;
 
 
 import com.acmerobotics.dashboard.FtcDashboard;
@@ -8,6 +8,7 @@ import com.arcrobotics.ftclib.controller.PIDController;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 @Config
 
@@ -23,26 +24,33 @@ public class pidarm_test extends OpMode{
     private final double ticks_in_degree = 700 / 180.0;
 
 
-    private DcMotorEx arm_motor;
+    private DcMotorEx CL;
+    private DcMotorEx CR;
 
     @Override
     public void init() {
         controller = new PIDController(p, i, d);
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 
-        arm_motor = hardwareMap.get(DcMotorEx.class, "arm_motor");
+
+
+        CL = hardwareMap.get(DcMotorEx.class, "CL");
+        CR = hardwareMap.get(DcMotorEx.class, "CR");
+
+        CR.setDirection(DcMotorSimple.Direction.REVERSE);
     }
 
     @Override
     public void loop() {
         controller.setPID(p, i, d);
-        int armPos = arm_motor.getCurrentPosition();
+        int armPos = CL.getCurrentPosition();
         double pid = controller.calculate(armPos, target);
         double ff = Math.cos(Math.toRadians(target / ticks_in_degree)) * f;
 
         double power = pid + ff;
 
-        arm_motor.setPower(power);
+        CL.setPower(power);
+        CR.setPower(power);
 
         telemetry.addData("pos ", armPos);
         telemetry.addData("target ", target);
