@@ -24,8 +24,8 @@ public class pidarm_test extends OpMode{
     private final double ticks_in_degree = 700 / 180.0;
 
 
-    private DcMotorEx CL;
-    private DcMotorEx CR;
+    private DcMotorEx AL;
+    private DcMotorEx AR;
 
     @Override
     public void init() {
@@ -34,23 +34,23 @@ public class pidarm_test extends OpMode{
 
 
 
-        CL = hardwareMap.get(DcMotorEx.class, "CL");
-        CR = hardwareMap.get(DcMotorEx.class, "CR");
+        AL = hardwareMap.get(DcMotorEx.class, "AL");
+        AR = hardwareMap.get(DcMotorEx.class, "AR");
 
-        CR.setDirection(DcMotorSimple.Direction.REVERSE);
+        AR.setDirection(DcMotorSimple.Direction.REVERSE);
     }
 
     @Override
     public void loop() {
         controller.setPID(p, i, d);
-        int armPos = CL.getCurrentPosition();
+        int armPos = AL.getCurrentPosition();
         double pid = controller.calculate(armPos, target);
         double ff = Math.cos(Math.toRadians(target / ticks_in_degree)) * f;
 
         double power = pid + ff;
 
-        CL.setPower(power);
-        CR.setPower(power);
+        AL.setPower(power);
+        AR.setPower(power);
 
         telemetry.addData("pos ", armPos);
         telemetry.addData("target ", target);
