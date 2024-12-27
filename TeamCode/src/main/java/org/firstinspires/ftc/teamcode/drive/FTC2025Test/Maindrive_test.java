@@ -14,6 +14,8 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
+//TODO: find drive motor Direction and setting IMU position
+
 @TeleOp (name = "Main drive test", group = "2024-2025 Test OP")
 
 public class Maindrive_test extends LinearOpMode {
@@ -77,11 +79,11 @@ public class Maindrive_test extends LinearOpMode {
 
         waitForStart();
 
-        //init for motors
+        /*  //init for motors - WARNING, DO NOT ACTIVATE!
         AL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         AL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         AR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        AR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        AR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);*/
 
         //setting default var
         int arm_target = 0;
@@ -115,7 +117,7 @@ public class Maindrive_test extends LinearOpMode {
             double y = -gamepad1.left_stick_y;  //y value is reversed
             double x = gamepad1.left_stick_x;
             double rx = gamepad1.right_stick_x;
-            double slow = 0.9 - (0.7 * gamepad1.right_trigger);
+            double slow = 0.9 - (0.7 * gamepad1.right_trigger);   //slow mechanism, change 0.7 to slow leveling
 
             //
             if (gamepad1.options) {

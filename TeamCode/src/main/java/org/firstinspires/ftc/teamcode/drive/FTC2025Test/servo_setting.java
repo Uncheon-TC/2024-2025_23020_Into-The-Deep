@@ -6,6 +6,8 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.Servo;
 
+//TODO: find optimal servo position - gripper and gripper angle(90 degree and 0 degree)
+
 @TeleOp(name = "servo_setting", group = "2024-2025 Test OP")
 
 public class servo_setting extends LinearOpMode {

@@ -12,6 +12,8 @@ import com.qualcomm.robotcore.hardware.Gamepad;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
+//TODO: merge to Maindrive_test
+
 @TeleOp (name = "OPMODE PID TEST", group = "2024-2025 Test OP")
 public class arm_pid_test extends LinearOpMode {
 
