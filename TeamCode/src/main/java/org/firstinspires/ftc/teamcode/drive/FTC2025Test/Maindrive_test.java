@@ -14,7 +14,9 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
-//TODO: find drive motor Direction and setting IMU position
+//TODO: find drive motor Direction and setting IMU position  ->  DONE
+
+//TODO: install entire servo and tuning
 
 @TeleOp (name = "Main drive test", group = "2024-2025 Test OP")
 
@@ -25,7 +27,7 @@ public class Maindrive_test extends LinearOpMode {
 
     public static double p = 0.04, i = 0, d = 0.001;
 
-    public static double f = 0.005;
+    public static double f = 0.001;
 
     public static int arm_target = 0;
 
@@ -53,21 +55,21 @@ public class Maindrive_test extends LinearOpMode {
         DcMotor BackRightMotor = hardwareMap.dcMotor.get("BR");
 
         //motor reverse
-        FrontRightMotor.setDirection(DcMotorSimple.Direction.REVERSE);
-        BackRightMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+        FrontLeftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+        BackLeftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 
         //IMU settings
         IMU imu = hardwareMap.get(IMU.class, "imu");
 
         IMU.Parameters parameters = new IMU.Parameters(new RevHubOrientationOnRobot(
-                RevHubOrientationOnRobot.LogoFacingDirection.UP, RevHubOrientationOnRobot.UsbFacingDirection.LEFT));
+                RevHubOrientationOnRobot.LogoFacingDirection.UP, RevHubOrientationOnRobot.UsbFacingDirection.FORWARD));
 
         /*
         DcMotor ArmLeft = hardwareMap.dcMotor.get("AL");
         DcMotor ArmRight = hardwareMap.dcMotor.get("AR");*/
 
-        Servo Gripper = hardwareMap.servo.get("Grip");
-        Servo Gripper_Angle = hardwareMap.servo.get("G_Angle");
+        Servo Vertical_Grip = hardwareMap.servo.get("V_Grip");   //vertical grip
+        Servo Vertical_Grip_Wrist = hardwareMap.servo.get("V_Wrist");   //vertical grip wrist
 
         Gamepad currentGamepad1 = new Gamepad();
         Gamepad currentGamepad2 = new Gamepad();
@@ -88,10 +90,30 @@ public class Maindrive_test extends LinearOpMode {
         //setting default var
         int arm_target = 0;
 
+        boolean V_Grip_status = false;   //true is button pressed, true = grip closed
+        boolean H_Grip_status = false;   //too
+
+        boolean first_count = false;
+
+        double V_Grip_OPEN = 0.3;
+        double V_Grip_CLOSE = 0;
+
+        //TODO: find Horizon Griper value
+        double H_Grip_OPEN = NUMBER;
+        double G_Grip_CLOSE = 0;
+
+
 
         while (opModeIsActive()) {
 
             if (isStopRequested()) return;  //check stop button pushed?
+
+            if (first_count) {
+                //write code
+
+
+                first_count = false;
+            }
 
             //pid calculate
             controller.setPID(p,i,d);
@@ -145,13 +167,27 @@ public class Maindrive_test extends LinearOpMode {
 
             //continue main coading
 
+            if (gamepad1.left_bumper) {
+
+            } else {
+
+            }
+
+            if (currentGamepad1.a && !previousGamepad1.a) {
+
+            }
+
+
+
 
 
 
 
             //telemetry settings
-            telemetry.addData("ArmPos", ArmPos);
-            telemetry.addData("Target Pos", arm_target);
+            telemetry.addData("ArmPos ", ArmPos);
+            telemetry.addData("Target Pos ", arm_target);
+            telemetry.addData("V_Grip Pos ", Vertical_Grip);
+            telemetry.addData("V_Grip_Wrist ", Vertical_Grip_Wrist);
             telemetry.update();  //update telemetry, end of line
         }
 
