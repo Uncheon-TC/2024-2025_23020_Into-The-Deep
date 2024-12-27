@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.Servo;
 
-@TeleOp(name = "servo_setting", group = "Into_the_deep")
+@TeleOp(name = "servo_setting", group = "2024-2025 Test OP")
 
 public class servo_setting extends LinearOpMode {
 

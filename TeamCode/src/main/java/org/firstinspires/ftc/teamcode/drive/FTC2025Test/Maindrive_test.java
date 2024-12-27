@@ -14,7 +14,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
-@TeleOp (name = "ITD_test1", group = "Into_the_deep")
+@TeleOp (name = "Main drive test", group = "2024-2025 Test OP")
 
 public class Maindrive_test extends LinearOpMode {
 

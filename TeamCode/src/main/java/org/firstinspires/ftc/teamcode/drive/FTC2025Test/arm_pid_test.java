@@ -12,7 +12,7 @@ import com.qualcomm.robotcore.hardware.Gamepad;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
-@TeleOp (name = "PID_armtest", group = "Into_the_deep")
+@TeleOp (name = "OPMODE PID TEST", group = "2024-2025 Test OP")
 public class arm_pid_test extends LinearOpMode {
 
     //pid settings
