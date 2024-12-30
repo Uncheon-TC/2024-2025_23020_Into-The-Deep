@@ -99,7 +99,6 @@ public class Maindrive_test extends LinearOpMode {
         double V_Grip_CLOSE = 0;
 
         //TODO: find Horizon Griper value
-        double H_Grip_OPEN = NUMBER;
         double G_Grip_CLOSE = 0;
 
 
