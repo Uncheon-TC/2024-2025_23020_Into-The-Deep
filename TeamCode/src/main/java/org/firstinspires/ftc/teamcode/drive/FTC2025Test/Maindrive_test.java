@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.drive.FTC2025Test;
 
 
 import com.arcrobotics.ftclib.controller.PIDController;
+import com.qualcomm.hardware.rev.RevColorSensorV3;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -101,6 +102,23 @@ public class Maindrive_test extends LinearOpMode {
         //TODO: find Horizon Griper value
         double G_Grip_CLOSE = 0;
 
+        int Low_basket = 2000;
+        int High_basket = 4200;
+
+        /*Gamepad.LedEffect sample_RED = new Gamepad.LedEffect.Builder()
+                .addStep(1, 0, 0, 100)
+                .setRepeating(true)
+                .build();
+
+        Gamepad.LedEffect sample_BLUE = new Gamepad.LedEffect.Builder()
+                .addStep(0, 0, 1, 100)
+                .setRepeating(true)
+                .build();
+
+        Gamepad.LedEffect sample_YELLOW = new Gamepad.LedEffect.Builder()
+                .addStep(1, 1, 0, 100)
+                .setRepeating(true)
+                .build();*/
 
 
         while (opModeIsActive()) {
@@ -138,7 +156,7 @@ public class Maindrive_test extends LinearOpMode {
             double y = -gamepad1.left_stick_y;  //y value is reversed
             double x = gamepad1.left_stick_x;
             double rx = gamepad1.right_stick_x;
-            double slow = 0.9 - (0.7 * gamepad1.right_trigger);   //slow mechanism, change 0.7 to slow leveling
+            double slow = 1 - (0.8 * gamepad1.right_trigger);   //slow mechanism, change 0.8 to slow leveling
 
             //
             if (gamepad1.options) {
@@ -172,7 +190,7 @@ public class Maindrive_test extends LinearOpMode {
 
             }
 
-            if (currentGamepad1.a && !previousGamepad1.a) {
+            if (rising_edge(currentGamepad1.a, previousGamepad1.a)) {
 
             }
 
@@ -190,5 +208,9 @@ public class Maindrive_test extends LinearOpMode {
             telemetry.update();  //update telemetry, end of line
         }
 
+    }
+
+    private boolean rising_edge(boolean currentButtonState, boolean previousButtonState) {
+        return currentButtonState && !previousButtonState;
     }
 }
