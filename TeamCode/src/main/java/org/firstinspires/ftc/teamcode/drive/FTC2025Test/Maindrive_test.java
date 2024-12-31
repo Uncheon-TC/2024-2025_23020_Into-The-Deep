@@ -26,7 +26,7 @@ public class Maindrive_test extends LinearOpMode {
     //pid settings
     private PIDController controller;
 
-    public static double p = 0.04, i = 0, d = 0.001;
+    public static double p = 0.02, i = 0, d = 0.0005;
 
     public static double f = 0.001;
 
@@ -47,6 +47,7 @@ public class Maindrive_test extends LinearOpMode {
         AL = hardwareMap.get(DcMotorEx.class, "AL");
         AR = hardwareMap.get(DcMotorEx.class, "AR");
         AR.setDirection(DcMotorSimple.Direction.REVERSE);
+
 
         //declear motor
 
@@ -69,8 +70,15 @@ public class Maindrive_test extends LinearOpMode {
         DcMotor ArmLeft = hardwareMap.dcMotor.get("AL");
         DcMotor ArmRight = hardwareMap.dcMotor.get("AR");*/
 
-        Servo Vertical_Grip = hardwareMap.servo.get("V_Grip");   //vertical grip
-        Servo Vertical_Grip_Wrist = hardwareMap.servo.get("V_Wrist");   //vertical grip wrist
+        Servo V_wristR = hardwareMap.servo.get("V_wristR"); //Bucket Wrist right Servo
+        Servo V_wristL = hardwareMap.servo.get("V_wristL"); //Bucket Wrist left Servo
+        Servo H_length = hardwareMap.servo.get("H_length"); //Slide right Servo
+        Servo H_wristR = hardwareMap.servo.get("H_wristR"); // Ground Gripper right Servo
+        Servo H_wristL = hardwareMap.servo.get("H_wristL"); // Ground Gripper Left Servo
+        Servo H_angleR = hardwareMap.servo.get("H_angleR"); // Wrist right Servo
+        Servo H_angleL = hardwareMap.servo.get("H_angleL"); // Wrist left Servo
+        Servo H_grip = hardwareMap.servo.get("H_grip");
+        Servo V_grip = hardwareMap.servo.get("V_grip"); //vertical grip wrist
 
         Gamepad currentGamepad1 = new Gamepad();
         Gamepad currentGamepad2 = new Gamepad();
@@ -82,11 +90,7 @@ public class Maindrive_test extends LinearOpMode {
 
         waitForStart();
 
-        /*  //init for motors - WARNING, DO NOT ACTIVATE!
-        AL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        AL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        AR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        AR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);*/
+
 
         //setting default var
         int arm_target = 0;
@@ -96,14 +100,25 @@ public class Maindrive_test extends LinearOpMode {
 
         boolean first_count = false;
 
-        double V_Grip_OPEN = 0.3;
-        double V_Grip_CLOSE = 0;
+        double V_Grip_OPEN = 0.4;
+        double V_Grip_CLOSE = 0.64;
 
         //TODO: find Horizon Griper value
         double G_Grip_CLOSE = 0;
 
-        int Low_basket = 2000;
+        int Low_basket = 2400;
         int High_basket = 4200;
+        int clip_pick = 0;
+
+        int High_chamber = 1800;
+
+        //TODO: make rigging mechanism and find tick
+        int Low_rigging = 0;
+
+        double V_wrist_outside_90degree = 0.83;
+        double V_wrist_clip_pickup = 0.86;
+        double V_wrist_pickup = 0.13;
+
 
         /*Gamepad.LedEffect sample_RED = new Gamepad.LedEffect.Builder()
                 .addStep(1, 0, 0, 100)
@@ -184,27 +199,38 @@ public class Maindrive_test extends LinearOpMode {
 
             //continue main coading
 
-            if (gamepad1.left_bumper) {
-
+            if (gamepad2.right_bumper) {
+                V_grip.setPosition(V_Grip_OPEN);
             } else {
-
+                V_grip.setPosition(V_Grip_CLOSE);
             }
 
-            if (rising_edge(currentGamepad1.a, previousGamepad1.a)) {
-
+            if (rising_edge(currentGamepad2.a, previousGamepad2.a)) {
+                arm_target = clip_pick;
+                V_wristL.setPosition(V_wrist_pickup);
             }
 
+            if (rising_edge(currentGamepad2.b, previousGamepad2.b)) {
+                arm_target = High_basket;
+                V_wristL.setPosition(V_wrist_outside_90degree);
+            }
 
+            if (rising_edge(currentGamepad2.x, previousGamepad2.x)) {
+                arm_target = High_chamber;
+                V_wristL.setPosition(V_wrist_outside_90degree);
+            }
 
-
-
+            if (rising_edge(currentGamepad2.y, previousGamepad2.y)) {
+                arm_target = clip_pick;
+                V_wristL.setPosition(V_wrist_clip_pickup);
+            }
 
 
             //telemetry settings
             telemetry.addData("ArmPos ", ArmPos);
             telemetry.addData("Target Pos ", arm_target);
-            telemetry.addData("V_Grip Pos ", Vertical_Grip);
-            telemetry.addData("V_Grip_Wrist ", Vertical_Grip_Wrist);
+            telemetry.addData("V_Grip Pos ", V_grip.getPosition());
+            telemetry.addData("V_Grip_Wrist ", V_wristL.getPosition());
             telemetry.update();  //update telemetry, end of line
         }
 

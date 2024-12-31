@@ -20,9 +20,9 @@ public class arm_pid_test extends LinearOpMode {
     //pid settings
     private PIDController controller;
 
-    public static double p = 0.04, i = 0, d = 0.001;
+    public static double p = 0.02, i = 0, d = 0.0005;
 
-    public static double f = 0.005;
+    public static double f = 0.001;
 
     public static int arm_target = 0;
 
@@ -39,6 +39,7 @@ public class arm_pid_test extends LinearOpMode {
 
         AL = hardwareMap.get(DcMotorEx.class, "AL");
         AR = hardwareMap.get(DcMotorEx.class, "AR");
+
         AR.setDirection(DcMotorSimple.Direction.REVERSE);
 
         Gamepad currentGamepad1 = new Gamepad();
@@ -97,6 +98,7 @@ public class arm_pid_test extends LinearOpMode {
 
             telemetry.addData("target ", arm_target);
             telemetry.addData("pos ", ArmPos);
+            telemetry.addData("power ", ArmPower);
             telemetry.update();
 
         }

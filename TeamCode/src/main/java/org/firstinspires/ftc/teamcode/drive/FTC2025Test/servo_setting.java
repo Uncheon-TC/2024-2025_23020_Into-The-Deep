@@ -15,11 +15,11 @@ public class servo_setting extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
 
-        Servo gripper = hardwareMap.servo.get("Grip");
-        Servo Gangle = hardwareMap.servo.get("GAngle");
+        Servo V_wristL = hardwareMap.servo.get("V_wristL");
+        Servo V_grip = hardwareMap.servo.get("V_grip");
 
-        double grip_target = 0;
-        double gripAngle_target = 0;
+        double wrist = 0;
+        double grip = 0;
 
         Gamepad currentGamepad1 = new Gamepad();
         Gamepad currentGamepad2 = new Gamepad();
@@ -40,27 +40,29 @@ public class servo_setting extends LinearOpMode {
             currentGamepad2.copy(gamepad2);
 
             if (currentGamepad1.a && !previousGamepad1.a) {
-                grip_target = grip_target + 0.1;
-                gripper.setPosition(grip_target);
+                wrist = wrist + 0.01;
+                V_wristL.setPosition(wrist);
             }
 
             if (currentGamepad1.b && !previousGamepad1.b) {
-                grip_target = grip_target - 0.1;
-                gripper.setPosition(grip_target);
+                wrist = wrist - 0.01;
+                V_wristL.setPosition(wrist);
             }
 
             if (currentGamepad1.x && !previousGamepad1.x) {
-                gripAngle_target = gripAngle_target + 0.1;
-                Gangle.setPosition(gripAngle_target);
+                wrist = wrist + 0.1;
+                V_wristL.setPosition(wrist);
             }
 
             if (currentGamepad1.y && !previousGamepad1.y) {
-                gripAngle_target = gripAngle_target - 0.1;
-                Gangle.setPosition(gripAngle_target);
+                wrist = wrist - 0.1;
+                V_wristL.setPosition(wrist);
             }
 
-            telemetry.addData("grip", grip_target);
-            telemetry.addData("angle", gripAngle_target);
+
+
+            telemetry.addData("grip", wrist);
+            telemetry.addData("angle", grip);
             telemetry.update();
         }
     }
