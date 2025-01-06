@@ -111,6 +111,7 @@ public class Maindrive_test extends LinearOpMode {
         int clip_pick = 0;
 
         int High_chamber = 1800;
+        int High_chamber_hang = 1700;
 
         //TODO: make rigging mechanism and find tick
         int Low_rigging = 0;
@@ -119,6 +120,7 @@ public class Maindrive_test extends LinearOpMode {
         double V_wrist_clip_pickup = 0.86;
         double V_wrist_pickup = 0.13;
 
+        int chamber_status = 0;
 
         /*Gamepad.LedEffect sample_RED = new Gamepad.LedEffect.Builder()
                 .addStep(1, 0, 0, 100)
@@ -215,9 +217,22 @@ public class Maindrive_test extends LinearOpMode {
                 V_wristL.setPosition(V_wrist_outside_90degree);
             }
 
+            //TODO: chamber_High_hang find
             if (rising_edge(currentGamepad2.x, previousGamepad2.x)) {
-                arm_target = High_chamber;
-                V_wristL.setPosition(V_wrist_outside_90degree);
+
+                if (chamber_status == 0) {
+
+                    arm_target = High_chamber;
+                    V_wristL.setPosition(V_wrist_outside_90degree);
+                    chamber_status = 1;
+
+                } else if (chamber_status == 1) {
+
+                    arm_target = High_chamber_hang;
+                    chamber_status = 0;
+
+                }
+
             }
 
             if (rising_edge(currentGamepad2.y, previousGamepad2.y)) {
