@@ -21,7 +21,7 @@ public class diff_servo_setting_SERVOREVERSE extends LinearOpMode {
     private Servo H_wristL;
     private Servo H_wristR;
 
-    public static double interval = 0;
+    public static double interval = 0.05;
 
 
     @Override
@@ -34,7 +34,8 @@ public class diff_servo_setting_SERVOREVERSE extends LinearOpMode {
 
         H_wristL.setDirection(Servo.Direction.REVERSE);
 
-        double wrist = 0;
+        double wristL = 0.5;
+        double wristR = 0.5;
 
         Gamepad currentGamepad1 = new Gamepad();
         Gamepad currentGamepad2 = new Gamepad();
@@ -42,7 +43,7 @@ public class diff_servo_setting_SERVOREVERSE extends LinearOpMode {
         Gamepad previousGamepad1 = new Gamepad();
         Gamepad previousGamepad2 = new Gamepad();
 
-        wrist_Hcontrol(0.5);
+        wrist_control(wristL, wristR);
 
         waitForStart();
 
@@ -81,46 +82,81 @@ public class diff_servo_setting_SERVOREVERSE extends LinearOpMode {
             */
 
             if (currentGamepad1.dpad_left && !previousGamepad1.dpad_left) {
-                wrist = wrist + interval;
-                wrist_Hcontrol(wrist);
+                wristL = wristL + interval;
+                wristR = wristR - interval;
+
+                if (wristL > 1) {
+                    wristL = 1;
+                }
+
+                if (wristR < 0) {
+                    wristR = 0;
+                }
+
+                wrist_control(wristL, wristR);
             }
 
             if (currentGamepad1.dpad_right && !previousGamepad1.dpad_right) {
-                wrist = wrist - interval;
-                wrist_Hcontrol(wrist);
+                wristL = wristL - interval;
+                wristR = wristR + interval;
+
+                if (wristL < 0) {
+                    wristL = 0;
+                }
+
+                if (wristR > 1) {
+                    wristR = 1;
+                }
+
+                wrist_control(wristL, wristR);
             }
 
 
 
             if (currentGamepad1.dpad_up && !previousGamepad1.dpad_up) {
-                wrist = wrist + interval;
-                wrist_Vcontrol(wrist);
+                wristL = wristL + interval;
+                wristR = wristR + interval;
+
+                if (wristL > 1) {
+                    wristL = 1;
+                }
+
+                if (wristR > 1) {
+                    wristR = 1;
+                }
+
+                wrist_control(wristL, wristR);
 
             }
 
             if (currentGamepad1.dpad_down && !previousGamepad1.dpad_down) {
-                wrist = wrist - interval;
-                wrist_Vcontrol(wrist);
+                wristL = wristL - interval;
+                wristR = wristR - interval;
+
+                if (wristL < 0) {
+                    wristL = 0;
+                }
+
+                if (wristR < 0) {
+                    wristR = 0;
+                }
+
+                wrist_control(wristL, wristR);
             }
 
 
 
-            telemetry.addData("POS ", wrist);
-
+            telemetry.addData("wristL ", wristL);
+            telemetry.addData("wristR ", wristR);
             telemetry.update();
         }
 
 
     }
 
-    private void wrist_Vcontrol(double pos) {
-        H_wristR.setPosition(pos);
-        H_wristL.setPosition(pos);
-    }
-
-    private void wrist_Hcontrol(double pos) {
-        H_wristR.setPosition(pos);
-        H_wristL.setPosition(1-pos);
+    private void wrist_control(double L, double R) {
+        H_wristL.setPosition(L);
+        H_wristR.setPosition(R);
     }
 
 }

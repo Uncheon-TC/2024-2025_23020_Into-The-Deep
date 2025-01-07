@@ -9,6 +9,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Gamepad;
+import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
@@ -47,6 +48,12 @@ public class arm_pid_test extends LinearOpMode {
 
         Gamepad previousGamepad1 = new Gamepad();
         Gamepad previousGamepad2 = new Gamepad();
+
+        Servo V_wristL = hardwareMap.servo.get("V_wristL");
+        Servo V_grip = hardwareMap.servo.get("V_grip");
+
+        double wrist = 0;
+        double grip = 0;
 
         waitForStart();
 
@@ -96,9 +103,34 @@ public class arm_pid_test extends LinearOpMode {
 
             }
 
+            if (currentGamepad1.a && !previousGamepad1.a) {
+                wrist = wrist + 0.01;
+                V_wristL.setPosition(wrist);
+            }
+
+            if (currentGamepad1.b && !previousGamepad1.b) {
+                wrist = wrist - 0.01;
+                V_wristL.setPosition(wrist);
+            }
+
+            if (currentGamepad1.x && !previousGamepad1.x) {
+                wrist = wrist + 0.1;
+                V_wristL.setPosition(wrist);
+            }
+
+            if (currentGamepad1.y && !previousGamepad1.y) {
+                wrist = wrist - 0.1;
+                V_wristL.setPosition(wrist);
+            }
+
+
             telemetry.addData("target ", arm_target);
             telemetry.addData("pos ", ArmPos);
             telemetry.addData("power ", ArmPower);
+            telemetry.addLine();
+            telemetry.addData("grip", wrist);
+            telemetry.addData("angle", grip);
+
             telemetry.update();
 
         }

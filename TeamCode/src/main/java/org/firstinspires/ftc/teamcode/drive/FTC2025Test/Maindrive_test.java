@@ -2,7 +2,6 @@ package org.firstinspires.ftc.teamcode.drive.FTC2025Test;
 
 
 import com.arcrobotics.ftclib.controller.PIDController;
-import com.qualcomm.hardware.rev.RevColorSensorV3;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -13,6 +12,7 @@ import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.Servo;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
 //TODO: find drive motor Direction and setting IMU position  ->  DONE
@@ -37,6 +37,9 @@ public class Maindrive_test extends LinearOpMode {
     private DcMotorEx AL;
     private DcMotorEx AR;
 
+    private Servo H_wristL;
+    private Servo H_wristR;
+
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -57,8 +60,8 @@ public class Maindrive_test extends LinearOpMode {
         DcMotor BackRightMotor = hardwareMap.dcMotor.get("BR");
 
         //motor reverse
-        FrontLeftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
-        BackLeftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+        FrontRightMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+        BackRightMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 
         //IMU settings
         IMU imu = hardwareMap.get(IMU.class, "imu");
@@ -73,12 +76,14 @@ public class Maindrive_test extends LinearOpMode {
         Servo V_wristR = hardwareMap.servo.get("V_wristR"); //Bucket Wrist right Servo
         Servo V_wristL = hardwareMap.servo.get("V_wristL"); //Bucket Wrist left Servo
         Servo H_length = hardwareMap.servo.get("H_length"); //Slide right Servo
-        Servo H_wristR = hardwareMap.servo.get("H_wristR"); // Ground Gripper right Servo
-        Servo H_wristL = hardwareMap.servo.get("H_wristL"); // Ground Gripper Left Servo
+        H_wristR = hardwareMap.servo.get("H_wristR"); // Ground Gripper right Servo
+        H_wristL = hardwareMap.servo.get("H_wristL"); // Ground Gripper Left Servo
         Servo H_angleR = hardwareMap.servo.get("H_angleR"); // Wrist right Servo
         Servo H_angleL = hardwareMap.servo.get("H_angleL"); // Wrist left Servo
         Servo H_grip = hardwareMap.servo.get("H_grip");
         Servo V_grip = hardwareMap.servo.get("V_grip"); //vertical grip wrist
+
+        H_wristL.setDirection(Servo.Direction.REVERSE);
 
         Gamepad currentGamepad1 = new Gamepad();
         Gamepad currentGamepad2 = new Gamepad();
@@ -111,7 +116,7 @@ public class Maindrive_test extends LinearOpMode {
         int clip_pick = 0;
 
         int High_chamber = 1800;
-        int High_chamber_hang = 1700;
+        int High_chamber_hang = 1350;
 
         //TODO: make rigging mechanism and find tick
         int Low_rigging = 0;
@@ -119,8 +124,14 @@ public class Maindrive_test extends LinearOpMode {
         double V_wrist_outside_90degree = 0.83;
         double V_wrist_clip_pickup = 0.86;
         double V_wrist_pickup = 0.13;
+        double V_wrist_basket = 0.76;
 
         int chamber_status = 0;
+
+        double H_wristL = 0.5;
+        double H_wristR = 0.5;
+
+        double interval = 0.05;
 
         /*Gamepad.LedEffect sample_RED = new Gamepad.LedEffect.Builder()
                 .addStep(1, 0, 0, 100)
@@ -210,11 +221,13 @@ public class Maindrive_test extends LinearOpMode {
             if (rising_edge(currentGamepad2.a, previousGamepad2.a)) {
                 arm_target = clip_pick;
                 V_wristL.setPosition(V_wrist_pickup);
+
+                chamber_status = 0;
             }
 
             if (rising_edge(currentGamepad2.b, previousGamepad2.b)) {
                 arm_target = High_basket;
-                V_wristL.setPosition(V_wrist_outside_90degree);
+                V_wristL.setPosition(V_wrist_basket);
             }
 
             //TODO: chamber_High_hang find
@@ -240,12 +253,77 @@ public class Maindrive_test extends LinearOpMode {
                 V_wristL.setPosition(V_wrist_clip_pickup);
             }
 
+            if (currentGamepad1.dpad_left && !previousGamepad1.dpad_left) {
+                H_wristL = H_wristL + interval;
+                H_wristR = H_wristR - interval;
+
+                if (H_wristL > 1) {
+                    H_wristL = 1;
+                }
+
+                if (H_wristR < 0) {
+                    H_wristR = 0;
+                }
+
+                wrist_control(H_wristL, H_wristR);
+            }
+
+            if (currentGamepad1.dpad_right && !previousGamepad1.dpad_right) {
+                H_wristL = H_wristL - interval;
+                H_wristR = H_wristR + interval;
+
+                if (H_wristL < 0) {
+                    H_wristL = 0;
+                }
+
+                if (H_wristR > 1) {
+                    H_wristR = 1;
+                }
+
+                wrist_control(H_wristL, H_wristR);
+            }
+
+
+
+            if (currentGamepad1.dpad_up && !previousGamepad1.dpad_up) {
+                H_wristL = H_wristL + interval;
+                H_wristR = H_wristR + interval;
+
+                if (H_wristL > 1) {
+                    H_wristL = 1;
+                }
+
+                if (H_wristR > 1) {
+                    H_wristR = 1;
+                }
+
+                wrist_control(H_wristL, H_wristR);
+
+            }
+
+            if (currentGamepad1.dpad_down && !previousGamepad1.dpad_down) {
+                H_wristL = H_wristL - interval;
+                H_wristR = H_wristR - interval;
+
+                if (H_wristL < 0) {
+                    H_wristL = 0;
+                }
+
+                if (H_wristR < 0) {
+                    H_wristR = 0;
+                }
+
+                wrist_control(H_wristL, H_wristR);
+            }
+
 
             //telemetry settings
             telemetry.addData("ArmPos ", ArmPos);
             telemetry.addData("Target Pos ", arm_target);
             telemetry.addData("V_Grip Pos ", V_grip.getPosition());
             telemetry.addData("V_Grip_Wrist ", V_wristL.getPosition());
+            telemetry.addData("H_wristL ", H_wristL);
+            telemetry.addData("H_wristR ", H_wristR);
             telemetry.update();  //update telemetry, end of line
         }
 
@@ -253,5 +331,10 @@ public class Maindrive_test extends LinearOpMode {
 
     private boolean rising_edge(boolean currentButtonState, boolean previousButtonState) {
         return currentButtonState && !previousButtonState;
+    }
+
+    private void wrist_control(double L, double R) {
+        H_wristL.setPosition(L);
+        H_wristR.setPosition(R);
     }
 }
