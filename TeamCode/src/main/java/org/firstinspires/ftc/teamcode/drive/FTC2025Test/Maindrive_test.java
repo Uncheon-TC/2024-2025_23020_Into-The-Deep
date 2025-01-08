@@ -108,6 +108,9 @@ public class Maindrive_test extends LinearOpMode {
         double V_Grip_OPEN = 0.4;
         double V_Grip_CLOSE = 0.64;
 
+        double H_Grip_OPEN = 0.55;
+        double H_Grip_CLOSE = 0.8;
+
         //TODO: find Horizon Griper value
         double G_Grip_CLOSE = 0;
 
@@ -130,6 +133,9 @@ public class Maindrive_test extends LinearOpMode {
 
         double H_wristL = 0.5;
         double H_wristR = 0.5;
+
+        double H_length_IN = 0.8;
+        double H_length_OUT = 0.5;
 
         double interval = 0.05;
 
@@ -282,6 +288,7 @@ public class Maindrive_test extends LinearOpMode {
 
                 wrist_control(H_wristL, H_wristR);
             }
+
 
 
 
