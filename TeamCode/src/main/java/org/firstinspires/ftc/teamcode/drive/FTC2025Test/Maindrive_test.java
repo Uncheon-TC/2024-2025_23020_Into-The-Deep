@@ -37,8 +37,15 @@ public class Maindrive_test extends LinearOpMode {
     private DcMotorEx AL;
     private DcMotorEx AR;
 
+    private Servo V_wristL;
+    private Servo H_length;
     private Servo H_wristL;
     private Servo H_wristR;
+    private Servo H_angleL;
+    private Servo H_angleR;
+    private Servo H_grip;
+    private Servo V_grip;
+
 
 
     @Override
@@ -54,10 +61,10 @@ public class Maindrive_test extends LinearOpMode {
 
         //declear motor
 
-        DcMotor FrontLeftMotor = hardwareMap.dcMotor.get("FL");
-        DcMotor FrontRightMotor = hardwareMap.dcMotor.get("FR");
-        DcMotor BackLeftMotor = hardwareMap.dcMotor.get("BL");
-        DcMotor BackRightMotor = hardwareMap.dcMotor.get("BR");
+        DcMotor FrontLeftMotor = hardwareMap.dcMotor.get("leftFront");
+        DcMotor FrontRightMotor = hardwareMap.dcMotor.get("rightFront");
+        DcMotor BackLeftMotor = hardwareMap.dcMotor.get("leftBack");
+        DcMotor BackRightMotor = hardwareMap.dcMotor.get("rightBack");
 
         //motor reverse
         FrontRightMotor.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -73,17 +80,19 @@ public class Maindrive_test extends LinearOpMode {
         DcMotor ArmLeft = hardwareMap.dcMotor.get("AL");
         DcMotor ArmRight = hardwareMap.dcMotor.get("AR");*/
 
-        Servo V_wristR = hardwareMap.servo.get("V_wristR"); //Bucket Wrist right Servo
-        Servo V_wristL = hardwareMap.servo.get("V_wristL"); //Bucket Wrist left Servo
-        Servo H_length = hardwareMap.servo.get("H_length"); //Slide right Servo
+        //V_wristR = hardwareMap.servo.get("V_wristR"); //Bucket Wrist right Servo
+        V_wristL = hardwareMap.servo.get("V_wristL"); //Bucket Wrist left Servo
+        H_length = hardwareMap.servo.get("H_length"); //Slide right Servo
         H_wristR = hardwareMap.servo.get("H_wristR"); // Ground Gripper right Servo
         H_wristL = hardwareMap.servo.get("H_wristL"); // Ground Gripper Left Servo
-        Servo H_angleR = hardwareMap.servo.get("H_angleR"); // Wrist right Servo
-        Servo H_angleL = hardwareMap.servo.get("H_angleL"); // Wrist left Servo
-        Servo H_grip = hardwareMap.servo.get("H_grip");
-        Servo V_grip = hardwareMap.servo.get("V_grip"); //vertical grip wrist
+        H_angleR = hardwareMap.servo.get("H_angleR"); // Wrist right Servo
+        H_angleL = hardwareMap.servo.get("H_angleL"); // Wrist left Servo
+        H_grip = hardwareMap.servo.get("H_grip");
+        V_grip = hardwareMap.servo.get("V_grip"); //vertical grip wrist
 
         H_wristL.setDirection(Servo.Direction.REVERSE);
+        H_angleL.setDirection(Servo.Direction.REVERSE);
+
 
         Gamepad currentGamepad1 = new Gamepad();
         Gamepad currentGamepad2 = new Gamepad();
@@ -105,14 +114,13 @@ public class Maindrive_test extends LinearOpMode {
 
         boolean first_count = false;
 
-        double V_Grip_OPEN = 0.4;
-        double V_Grip_CLOSE = 0.64;
+        double V_Grip_OPEN = 0.35;
+        double V_Grip_CLOSE = 0.63;
 
         double H_Grip_OPEN = 0.55;
         double H_Grip_CLOSE = 0.8;
 
         //TODO: find Horizon Griper value
-        double G_Grip_CLOSE = 0;
 
         int Low_basket = 2400;
         int High_basket = 4200;
@@ -126,7 +134,7 @@ public class Maindrive_test extends LinearOpMode {
 
         double V_wrist_outside_90degree = 0.83;
         double V_wrist_clip_pickup = 0.86;
-        double V_wrist_pickup = 0.13;
+        double V_wrist_trans = 0.07;
         double V_wrist_basket = 0.76;
 
         int chamber_status = 0;
@@ -134,8 +142,12 @@ public class Maindrive_test extends LinearOpMode {
         double H_wristL = 0.5;
         double H_wristR = 0.5;
 
-        double H_length_IN = 0.8;
+        double H_length_IN = 0.85;
         double H_length_OUT = 0.5;
+
+        double H_angle_Ready = 0.27;
+        double H_angle_pickup = 0.2;
+        double H_angle_trans = 0.7;
 
         double interval = 0.05;
 
@@ -218,6 +230,19 @@ public class Maindrive_test extends LinearOpMode {
 
             //continue main coading
 
+            if (gamepad1.x) {
+                H_length.setPosition(H_length_OUT);
+                H_angleL.setPosition(H_angle_Ready);
+                // H_wrist 손목 세팅 값 넣어야 함.
+                H_grip.setPosition(H_Grip_OPEN);
+            }
+
+            if(gamepad1.b) {
+                H_length.setPosition(H_length_IN);
+                H_angleL.setPosition(H_angle_trans);
+                //손목 세팅 값 찾아서 넣기.
+            }
+
             if (gamepad2.right_bumper) {
                 V_grip.setPosition(V_Grip_OPEN);
             } else {
@@ -226,7 +251,7 @@ public class Maindrive_test extends LinearOpMode {
 
             if (rising_edge(currentGamepad2.a, previousGamepad2.a)) {
                 arm_target = clip_pick;
-                V_wristL.setPosition(V_wrist_pickup);
+                V_wristL.setPosition(V_wrist_trans);
 
                 chamber_status = 0;
             }
