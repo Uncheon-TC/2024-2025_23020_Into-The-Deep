@@ -109,9 +109,6 @@ public class Maindrive_test extends LinearOpMode {
         //setting default var
         int arm_target = 0;
 
-        boolean V_Grip_status = false;   //true is button pressed, true = grip closed
-        boolean H_Grip_status = false;   //too
-
         boolean first_count = false;
 
         double V_Grip_OPEN = 0.35;
@@ -135,7 +132,11 @@ public class Maindrive_test extends LinearOpMode {
         double V_wrist_outside_90degree = 0.83;
         double V_wrist_clip_pickup = 0.86;
         double V_wrist_trans = 0.07;
+        double V_wrist_trans_temp = 0.2;
         double V_wrist_basket = 0.76;
+
+
+        int trans_status = 0;
 
         int chamber_status = 0;
 
@@ -230,16 +231,17 @@ public class Maindrive_test extends LinearOpMode {
 
             //continue main coading
 
-            if (gamepad1.x) {
+
+            //
+            if (gamepad2.dpad_up) {
                 H_length.setPosition(H_length_OUT);
-                H_angleL.setPosition(H_angle_Ready);
+                angle_control(H_angle_Ready);
                 // H_wrist 손목 세팅 값 넣어야 함.
-                H_grip.setPosition(H_Grip_OPEN);
             }
 
-            if(gamepad1.b) {
+            if(gamepad2.dpad_down) {
                 H_length.setPosition(H_length_IN);
-                H_angleL.setPosition(H_angle_trans);
+                angle_control(H_angle_trans);
                 //손목 세팅 값 찾아서 넣기.
             }
 
@@ -249,9 +251,22 @@ public class Maindrive_test extends LinearOpMode {
                 V_grip.setPosition(V_Grip_CLOSE);
             }
 
+            if (gamepad2.left_bumper) {
+                H_grip.setPosition(H_Grip_OPEN);
+            } else {
+                H_grip.setPosition(H_Grip_CLOSE);
+            }
+
             if (rising_edge(currentGamepad2.a, previousGamepad2.a)) {
                 arm_target = clip_pick;
-                V_wristL.setPosition(V_wrist_trans);
+
+                if (trans_status == 0) {
+                    V_wristL.setPosition(V_wrist_trans);
+                    trans_status = 1;
+                } else if (trans_status == 1) {
+                    V_wristL.setPosition(V_wrist_trans_temp);
+                    trans_status = 0;
+                }
 
                 chamber_status = 0;
             }
@@ -284,7 +299,7 @@ public class Maindrive_test extends LinearOpMode {
                 V_wristL.setPosition(V_wrist_clip_pickup);
             }
 
-            if (currentGamepad1.dpad_left && !previousGamepad1.dpad_left) {
+            if (rising_edge(currentGamepad2.dpad_left, previousGamepad2.dpad_left)) {
                 H_wristL = H_wristL + interval;
                 H_wristR = H_wristR - interval;
 
@@ -299,7 +314,7 @@ public class Maindrive_test extends LinearOpMode {
                 wrist_control(H_wristL, H_wristR);
             }
 
-            if (currentGamepad1.dpad_right && !previousGamepad1.dpad_right) {
+            if (rising_edge(currentGamepad2.dpad_right, previousGamepad2.dpad_right)) {
                 H_wristL = H_wristL - interval;
                 H_wristR = H_wristR + interval;
 
@@ -313,45 +328,11 @@ public class Maindrive_test extends LinearOpMode {
 
                 wrist_control(H_wristL, H_wristR);
             }
-
-
-
-
-            if (currentGamepad1.dpad_up && !previousGamepad1.dpad_up) {
-                H_wristL = H_wristL + interval;
-                H_wristR = H_wristR + interval;
-
-                if (H_wristL > 1) {
-                    H_wristL = 1;
-                }
-
-                if (H_wristR > 1) {
-                    H_wristR = 1;
-                }
-
-                wrist_control(H_wristL, H_wristR);
-
-            }
-
-            if (currentGamepad1.dpad_down && !previousGamepad1.dpad_down) {
-                H_wristL = H_wristL - interval;
-                H_wristR = H_wristR - interval;
-
-                if (H_wristL < 0) {
-                    H_wristL = 0;
-                }
-
-                if (H_wristR < 0) {
-                    H_wristR = 0;
-                }
-
-                wrist_control(H_wristL, H_wristR);
-            }
-
 
             //telemetry settings
             telemetry.addData("ArmPos ", ArmPos);
             telemetry.addData("Target Pos ", arm_target);
+            telemetry.addLine();
             telemetry.addData("V_Grip Pos ", V_grip.getPosition());
             telemetry.addData("V_Grip_Wrist ", V_wristL.getPosition());
             telemetry.addData("H_wristL ", H_wristL);
@@ -368,5 +349,10 @@ public class Maindrive_test extends LinearOpMode {
     private void wrist_control(double L, double R) {
         H_wristL.setPosition(L);
         H_wristR.setPosition(R);
+    }
+
+    private void angle_control(double target) {
+        H_angleL.setPosition(target);
+        H_angleR.setPosition(target);
     }
 }
