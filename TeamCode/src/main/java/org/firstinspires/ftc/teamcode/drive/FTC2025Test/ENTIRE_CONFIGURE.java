@@ -59,7 +59,7 @@ public class ENTIRE_CONFIGURE extends OpMode{
         AR = hardwareMap.get(DcMotorEx.class, "AR");
 
         AR.setDirection(DcMotorSimple.Direction.REVERSE);
-
+//
         //Servo V_wristR = hardwareMap.servo.get("V_wristR"); //Bucket Wrist right Servo
         V_wristL = hardwareMap.servo.get("V_wristL"); //Bucket Wrist left Servo
         H_length = hardwareMap.servo.get("H_length"); //Slide right Servo
